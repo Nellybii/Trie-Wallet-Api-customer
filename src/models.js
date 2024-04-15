@@ -22,7 +22,7 @@ const Customer = sequelize.define('Customers', {
     unique: true
   },
   nationalId: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
     unique: true
   },

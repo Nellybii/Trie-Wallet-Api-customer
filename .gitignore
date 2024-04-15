@@ -1,6 +1,7 @@
 config
 migrations
-models 
+models/customer
+models/index
 node_modules
 package-lock.js
 package.json 

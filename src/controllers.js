@@ -4,7 +4,28 @@ const Customer = require('./models');
 const createCustomer = async (req, res) => {
   try {
     const { firstname, lastname, nationality, nationalId, email, phone, age } = req.body;
-    
+
+    if (!firstname || !lastname || !nationality || !nationalId || !email || !phone || !age) {
+      return res.status(400).json({ message: 'All fields are required!' });
+    }
+
+    const existingCustomer = await Customer.findOne({
+      where:[
+        { email: email } || { nationalId: nationalId } || { phone: phone }
+      ]
+    });
+
+    if (existingCustomer) {
+      const existingFields = [];
+      if (existingCustomer.email === email) existingFields.push('email');
+      if (existingCustomer.nationalId === nationalId) existingFields.push('nationalId');
+      if (existingCustomer.phone === phone) existingFields.push('phone');
+
+      return res.status(403).json({
+        message: `The following field(s) already exist: ${existingFields.join(', ')}.`
+      });
+    }
+
     const customer = await Customer.create({
       firstname,
       lastname,
@@ -14,16 +35,16 @@ const createCustomer = async (req, res) => {
       phone,
       age
     });
-   if (!firstname || !lastname || !nationality || !nationalId || !email || !phone || !age) {
-    res.status(500).json({message: 'All fields are required!'});
-   }
-    res.status(201).json(customer); 
+
+    res.status(201).json(customer);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-// Function to get all customers
+
+
+// get all customers
 const getAllCustomers = async (req, res) => {
   try {
     const customers = await Customer.findAll();
@@ -45,7 +66,7 @@ const getCustomerById = async (req, res) => {
       return res.status(404).json({ message: 'Customer not found' });
     }
 
-    res.status(200).json(customer); // Send back the found customer
+    res.status(200).json(customer); 
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -87,10 +108,8 @@ const deleteCustomerById = async (req, res) => {
       return res.status(404).json({ message: 'Customer not found' });
     }
 
-    // Delete the customer record from the database
     await customer.destroy();
-
-    res.status(204).json(); // Send back an empty response for successful deletion
+    res.status(204).json({message:'Customer deleted succesfully'}); 
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
