@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const customerController = require('./controllers');
+const customerController = require("../src/controllers/customer.Controller")
 
 // Define routes
 router.get('/customers', customerController.getAllCustomers); 

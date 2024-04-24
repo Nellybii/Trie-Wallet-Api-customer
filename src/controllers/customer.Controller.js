@@ -1,5 +1,5 @@
 
-const Customer = require('./models'); 
+const Customer = require('../models/customer.Model'); 
 
 const createCustomer = async (req, res) => {
   try {
@@ -91,7 +91,7 @@ const updateCustomerById = async (req, res) => {
       age
     });
 
-    res.status(200).json(customer); // Send back the updated customer
+    res.status(200).json(customer); 
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
