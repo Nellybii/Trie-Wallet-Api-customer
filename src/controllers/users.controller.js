@@ -7,12 +7,10 @@ const registerUser = async (req, res) => {
     try {
         const { username, email, phone, password, role } = req.body;
 
-        // Check if any required field is missing
         if (!username || !email || !phone || !password || !role) {
             return res.status(400).json({ message: 'All fields are required!' });
         }
 
-        // Check if user with the same email or phone already exists
         const existingUser = await User.findOne({
             where: 
                 [{ email: email } || { phone: phone }] 
@@ -28,10 +26,8 @@ const registerUser = async (req, res) => {
             });
         }
 
-        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 15);
 
-        // Create the new user
         const user = await User.create({
             username,
             email,
@@ -40,7 +36,6 @@ const registerUser = async (req, res) => {
             role,
         });
 
-        // Respond with success message and user details
         return res.status(201).json({ message: 'User created successfully', user });
     } catch (err) {
         console.error(err.message);
@@ -68,11 +63,10 @@ const login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        // Generate JWT token
         const token = jwt.sign(
             { userId: user.id, email: user.email },
-            process.env.JWT_SECRET, // Use process.env.JWT_SECRET to access the secret key
-            { expiresIn: '1h' } // Token expires in 1 hour
+            process.env.JWT_SECRET, 
+            { expiresIn: '1h' } 
         );
 
         return res.status(200).json({ message: 'Login successful', token });
