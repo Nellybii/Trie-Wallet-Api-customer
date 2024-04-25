@@ -1,4 +1,4 @@
-const Account = require('../models/account.model'); 
+const Account = require('../models/account.Model'); 
 
 const getAccounts = async (req, res) => {
     try {
@@ -18,10 +18,11 @@ const createAccount = async (req, res) => {
             account_number,
             account_status,
             actual_balance,
-            current_balance
+            current_balance,
+            CustomerId
         } = req.body;
         const missingFields=[]
-        if (!account_name || !account_number || !account_status || !actual_balance || !current_balance) {
+        if (!account_name || !account_number || !account_status || !actual_balance || !current_balance ||!CustomerId) {
             missingFields.push('account_name');
             missingFields.push('account_type');
             missingFields.push('account_number');
@@ -45,12 +46,13 @@ const createAccount = async (req, res) => {
             account_number,
             account_status,
             actual_balance,
-            current_balance
+            current_balance,
+            CustomerId
         });
 
         return res.status(201).json({ message: 'Account created successfully', account: newAccount });
     } catch (error) {
-        console.error(error);
+        console.error(error.message);
         res.status(500).json({ message: 'Internal server error' });
     }
 };

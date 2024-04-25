@@ -3,38 +3,50 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const registerUser = async (req, res)=>{
+const registerUser = async (req, res) => {
     try {
-        const { username, email, phone, password } = req.body;
-        if(!username ||!email ||!phone ||!password){
+        const { username, email, phone, password, role } = req.body;
+
+        // Check if any required field is missing
+        if (!username || !email || !phone || !password || !role) {
             return res.status(400).json({ message: 'All fields are required!' });
         }
+
+        // Check if user with the same email or phone already exists
         const existingUser = await User.findOne({
-            where:[
-                { email: email } || { phone: phone }
-            ]
+            where: 
+                [{ email: email } || { phone: phone }] 
+            
         });
-        if(existingUser){
+
+        if (existingUser) {
             const existingFields = [];
-            if(existingUser.email === email) existingFields.push('email');
-            if(existingUser.phone === phone) existingFields.push('phone');
+            if (existingUser.email === email) existingFields.push('email');
+            if (existingUser.phone === phone) existingFields.push('phone');
             return res.status(403).json({
                 message: `The following field(s) already exist: ${existingFields.join(', ')}.`
             });
         }
+
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 15);
+
+        // Create the new user
         const user = await User.create({
             username,
             email,
             phone,
-            password: hashedPassword
+            password: hashedPassword,
+            role,
         });
-        return res.status(201).json({message: 'User created successfully', user});
-}catch(err){
-    console.log(err.message);
-    res.status(500).json({ message: 'Internal server error' });
-}
-}
+
+        // Respond with success message and user details
+        return res.status(201).json({ message: 'User created successfully', user });
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
 const login = async (req, res) => {
     const { email, password } = req.body;

@@ -41,10 +41,14 @@ const Customer = sequelize.define('customers', {
     allowNull: false,
     unique: true
   },
-
-  
-
 });
+
+Customer.associations = (models) => {
+  Customer.hasMany(models.    Account, {
+    foreignKey: 'accountId',
+    as: 'accounts',
+  });
+}
 
 module.exports = Customer;
 

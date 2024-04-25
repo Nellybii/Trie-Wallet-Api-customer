@@ -20,7 +20,9 @@ module.exports = (sequelize, DataTypes) => {
     account_type: DataTypes.STRING,
     account_status: DataTypes.STRING,
     actual_balance: DataTypes.DECIMAL,
-    current_balance: DataTypes.DECIMAL
+    current_balance: DataTypes.DECIMAL,
+    CustomerId: DataTypes.UUID,
+  
     
   }, {
     sequelize,

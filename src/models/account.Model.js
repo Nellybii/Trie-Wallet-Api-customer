@@ -10,7 +10,6 @@ const Account = sequelize.define('Account', {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
-        
     },
     account_number: {
         type: DataTypes.STRING,
@@ -23,7 +22,6 @@ const Account = sequelize.define('Account', {
     account_type: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
     },
     account_status: {
         type: DataTypes.ENUM('active', 'closed', 'frozen'),
@@ -39,9 +37,19 @@ const Account = sequelize.define('Account', {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0,
-        
-    }
+    },
+    CustomerId: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        references: {
+          model: 'customers',
+          key: 'id'
+        }
+      }
 });
 
+Account.associations = function (models){
+    Account.hasOne(models.customers, { foreignKey: 'customerId' });
+    }
 
 module.exports = Account;
