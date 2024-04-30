@@ -15,12 +15,13 @@ const Account = sequelize.define('Account', {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
+        defaultValue: sequelize.literal("nextval('account_number_seq')"),
         validate: {
             is: /^[0-9]{10}$/
         }
     },
     account_type: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('wallet', 'saving', 'loan'),
         allowNull: false,
     },
     account_status: {
@@ -45,11 +46,11 @@ const Account = sequelize.define('Account', {
           model: 'customers',
           key: 'id'
         }
-      }
+    }
 });
 
 Account.associations = function (models){
     Account.hasOne(models.customers, { foreignKey: 'customerId' });
-    }
+}
 
 module.exports = Account;
